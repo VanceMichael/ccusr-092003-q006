@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "domain": "亲子健康跑全程到达核验",
+  "required_fields": [
+    "runner_ref",
+    "guardian_ref",
+    "group_code",
+    "checkpoint_ref",
+    "device_sequence",
+    "occurred_at"
+  ],
+  "time_format": "ISO 8601 with offset",
+  "sample": {
+    "runner_ref": "RUNNER-DEMO",
+    "guardian_ref": "GUARDIAN-A",
+    "group_code": "family-5k",
+    "device_sequence": 4
+  }
+}
