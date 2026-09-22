@@ -1,6 +1,57 @@
 {
-  "runner_ref": "RUNNER-DEMO",
-  "guardian_ref": "GUARDIAN-A",
-  "group_code": "family-5k",
-  "device_sequence": 4
+  "event": {
+    "event_id": "WANGWU-DEMO",
+    "name": "王吴村亲子健康跑（本地示例，不含真实身份）",
+    "race_date": "2026-09-22"
+  },
+  "checkpoints": [
+    { "checkpoint_ref": "CP-START", "title": "起点检录线", "sequence": 0, "kind": "start" },
+    { "checkpoint_ref": "CP-AID", "title": "村东补给站", "sequence": 1, "kind": "aid_station" },
+    { "checkpoint_ref": "CP-FINISH", "title": "终点线", "sequence": 2, "kind": "finish" }
+  ],
+  "runners": [
+    {
+      "runner_ref": "RUNNER-GUARDIAN-DEMO",
+      "group_code": "family-5k",
+      "bib": "F-101-A",
+      "display_name": "豆包爸爸",
+      "is_minor": false,
+      "family_id": "FAMILY-DEMO-1",
+      "family_role": "guardian",
+      "chip_id": "CHIP-7F0001",
+      "contact_ref": "CONTACT-demo01"
+    },
+    {
+      "runner_ref": "RUNNER-CHILD-DEMO",
+      "guardian_ref": "RUNNER-GUARDIAN-DEMO",
+      "group_code": "family-5k",
+      "bib": "F-101-B",
+      "display_name": "豆包",
+      "is_minor": true,
+      "family_id": "FAMILY-DEMO-1",
+      "family_role": "child",
+      "chip_id": "CHIP-7F0002"
+    },
+    {
+      "runner_ref": "RUNNER-SOLO-DEMO",
+      "group_code": "individual-10k",
+      "bib": "10-203",
+      "display_name": "十公里选手",
+      "is_minor": false,
+      "chip_id": "CHIP-7F1003"
+    }
+  ],
+  "chip_reads": [
+    { "chip_id": "CHIP-7F0001", "checkpoint_ref": "CP-START", "occurred_at": "2026-09-22T08:00:12+08:00" },
+    { "chip_id": "CHIP-7F0002", "checkpoint_ref": "CP-START", "occurred_at": "2026-09-22T08:00:25+08:00" },
+    { "chip_id": "CHIP-7F0002", "checkpoint_ref": "CP-AID", "occurred_at": "2026-09-22T08:18:40+08:00", "device_sequence": 4, "source_hint": "chip_backfill" },
+    { "chip_id": "CHIP-7F0001", "checkpoint_ref": "CP-FINISH", "occurred_at": "2026-09-22T08:31:02+08:00" }
+  ],
+  "explain": {
+    "situation": "家长已过终点，孩子芯片停在补给站超过停滞阈值 → 指挥席 find-list 出现 child_stalled_guardian_ahead",
+    "volunteer_view": "只看到号码布 F-101-B、最后可信位置 CP-AID；看不到孩子姓名与家庭电话",
+    "guardian_self_service": "家长令牌只能查到 FAMILY-DEMO-1，看到孩子停在 CP-AID",
+    "facts": "补传与可能的重复刷卡都保留在 arrival_events；CP-AID 对该孩子仍只有一行到达状态",
+    "privacy": "示例中全部为虚构引用；contact_registry 中的号码经 AES-256-GCM 封存，只有指挥/医疗席可解封"
+  }
 }

@@ -5,7 +5,7 @@ COPY package*.json ./
 
 COPY . .
 
-RUN npm run migrate
 ENV PORT=8080 DATABASE_PATH=/data/app.sqlite3
 EXPOSE 8080
-CMD ["npm", "start"]
+# 数据卷在启动时才挂载，迁移在启动前执行
+CMD ["sh", "-c", "npm run migrate && npm start"]

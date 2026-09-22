@@ -1,19 +1,52 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "domain": "亲子健康跑全程到达核验",
-  "required_fields": [
-    "runner_ref",
-    "guardian_ref",
-    "group_code",
-    "checkpoint_ref",
-    "device_sequence",
-    "occurred_at"
-  ],
+  "groups": {
+    "family-5k": "五公里亲子组：报名建立监护关系，赛中持续校验，家庭计成绩",
+    "individual-10k": "十公里个人组：独立报名、独立计时排名，不带监护字段"
+  },
   "time_format": "ISO 8601 with offset",
+  "identity": "所有记录使用受控引用编号（runner_ref/guardian_ref/checkpoint_ref），不存放真实姓名与原始报文；联系方式以 contact_ref 间接引用、封存保管",
+  "facts": {
+    "chip_realtime": "芯片实时读取",
+    "chip_backfill": "设备离线后的补传（occurred_at 早于接收时间）",
+    "chip_repeat": "重复刷卡或同一报文重发，独立留痕但不改采信时间",
+    "manual": "人工更正，指向被更正事实；原始事实保留不删"
+  },
+  "invariants": [
+    "arrival_events 只追加，任何来源都不修改或删除既有事实",
+    "每个 (runner_ref, checkpoint_ref) 在 arrival_status 中只有一行",
+    "人工更正只改写投影，被更正事实仍可在指挥席时间线中追溯",
+    "医疗 disposition=transported 后该参赛者退出成绩计算",
+    "家长令牌绑定单一 family_id，只能查询本家庭",
+    "staff 角色不能解析联系方式，也不能读取未成年人完整轨迹",
+    "公开成绩与赛后汇总不含可定位未成年人的标识或精确时间"
+  ],
+  "endpoints": {
+    "POST /events": "command：建赛事",
+    "POST /events/:event_id/checkpoints": "command：布置检查点",
+    "POST /events/:event_id/runners": "command：报名（含监护关系、封存联系方式）",
+    "POST /staff/tokens": "command：发放 command/staff/medic 令牌",
+    "POST /family/tokens": "command：为家长发放绑定家庭的查询令牌",
+    "POST /runners/:runner_ref/checkin": "command|staff：检录（每人一次）",
+    "POST /chip-reads": "command|staff：芯片读取/补传统一入口，幂等",
+    "POST /runners/:runner_ref/corrections": "command：人工更正",
+    "POST /medical-events": "command|medic：医疗处置，transported 停止成绩",
+    "POST /runners/:runner_ref/departure": "command|staff：离场确认（每人一次）",
+    "GET /events/:event_id/find-list": "command|medic 全量；staff 裁剪为号码布+最后可信位置",
+    "GET /runners/:runner_ref/timeline": "按角色裁剪的可信时间线",
+    "GET /runners/:runner_ref/contact": "command|medic：解封联系方式（审计）",
+    "GET /family/status": "guardian：仅本家庭状态",
+    "GET /events/:event_id/results": "公开成绩（比赛所需最少信息）",
+    "GET /events/:event_id/aid-summary?k=": "command：赛后 k 匿名补给站停留汇总"
+  },
   "sample": {
     "runner_ref": "RUNNER-DEMO",
     "guardian_ref": "GUARDIAN-A",
     "group_code": "family-5k",
-    "device_sequence": 4
+    "checkpoint_ref": "CP-AID",
+    "device_sequence": 4,
+    "occurred_at": "2026-09-22T08:35:00+08:00",
+    "source": "chip_backfill"
   }
 }
