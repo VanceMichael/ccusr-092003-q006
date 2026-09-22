@@ -1,16 +1,13 @@
+"use strict";
 
-const http = require("node:http");
+const { createDomain } = require("./domain");
+const { createApp } = require("./app");
+const { openDatabase } = require("./db");
 
-function createServer() {
-  return http.createServer((request, response) => {
-    if (request.method === "GET" && request.url === "/health") {
-      response.writeHead(200, { "content-type": "application/json" });
-      response.end(JSON.stringify({ status: "ok" }));
-      return;
-    }
-    response.writeHead(404, { "content-type": "application/json" });
-    response.end(JSON.stringify({ error: "not_found" }));
-  });
+function createServer(options = {}) {
+  const database = options.database || openDatabase(options.databasePath);
+  const domain = createDomain(database, options);
+  return createApp(domain);
 }
 
 if (require.main === module) {

@@ -1,19 +1,47 @@
 {
-  "schema_version": "1",
-  "domain": "亲子健康跑全程到达核验",
-  "required_fields": [
-    "runner_ref",
-    "guardian_ref",
-    "group_code",
-    "checkpoint_ref",
-    "device_sequence",
-    "occurred_at"
-  ],
+  "schema_version": "2",
+  "domain": "亲子健康跑全程到达核验与赛事保障",
   "time_format": "ISO 8601 with offset",
+  "identifier_policy": "对外只使用 *_ref / bib / public_label 等不含真实身份的引用编号；家庭联系方式与敏感细节分表或仅存 sha256 摘要",
+  "roles": {
+    "command": "指挥/保障席：配置赛事、报名、人工更正、查看寻找清单（含联系方式）、完整时间线与赛后汇总",
+    "marshal": "普通志愿者：上报芯片/检录/医疗/离场事实，只读取脱敏的寻找清单",
+    "guardian": "家长：只读取自己家庭的进度视图",
+    "public": "无需令牌：只读取公开成绩"
+  },
+  "race_types": ["family-5k", "individual-10k"],
+  "fact_kinds": {
+    "chip": "芯片读刷",
+    "checkin": "人工检录",
+    "manual": "人工更正（correction_action: set | void，必须带 operator_ref 与 reason）",
+    "medical": "医疗处置（medical_action: treatment | evacuation；evacuation 停止成绩计算）",
+    "exit": "离场确认（只能发生在 exit 检查点）"
+  },
+  "fact_sources": ["live", "retransmitted", "duplicate", "manual"],
+  "required_fields": {
+    "fact": ["kind", "runner_ref", "occurred_at"],
+    "fact_at_checkpoint": ["kind", "runner_ref", "checkpoint_ref", "occurred_at"],
+    "family_registration": ["event_ref", "group_code", "public_label", "contact_channel", "members[]"],
+    "family_member": ["bib", "role"],
+    "checkpoint": ["event_ref", "checkpoint_ref", "code", "label", "kind", "race_type", "position"]
+  },
+  "runner_ref": "RUN-<event_ref>-<bib>（可在报名时显式指定）",
+  "family_ref": "FAM-<随机>（报名返回，家长令牌与其绑定）",
+  "invariants": [
+    "raw_events 只追加：重复刷卡、芯片补传、人工更正均保留为原始事实",
+    "每个参赛者 × 检查点在 arrival_states 中至多一条到达状态，状态可由事实完整重建",
+    "医疗转运后成绩状态锁定为 medical_evacuation，之后的终点读刷不产生成绩",
+    "五公里亲子组以最远监护人位置持续校验未成年人，分离产生开放告警，会合/完赛/转运/离场解除",
+    "公开成绩与汇总不包含检查点级数据，汇总只提供分组粗粒度计数"
+  ],
   "sample": {
-    "runner_ref": "RUNNER-DEMO",
-    "guardian_ref": "GUARDIAN-A",
-    "group_code": "family-5k",
-    "device_sequence": 4
+    "runner_ref": "RUN-WANGWU-2026-K001",
+    "guardian_ref": "RUN-WANGWU-2026-G001",
+    "group_code": "A-001",
+    "checkpoint_ref": "CP-5K-A1",
+    "device_sequence": 4,
+    "occurred_at": "2026-09-22T08:05:20+08:00",
+    "kind": "chip",
+    "source": "retransmitted"
   }
 }

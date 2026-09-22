@@ -1,6 +1,34 @@
-{
-  "runner_ref": "RUNNER-DEMO",
-  "guardian_ref": "GUARDIAN-A",
-  "group_code": "family-5k",
-  "device_sequence": 4
-}
+[
+  {
+    "kind": "chip",
+    "runner_ref": "RUN-WANGWU-2026-K001",
+    "guardian_ref": "RUN-WANGWU-2026-G001",
+    "group_code": "A-001",
+    "checkpoint_ref": "CP-5K-A1",
+    "device_id": "MAT-01",
+    "device_sequence": 4,
+    "source": "live",
+    "occurred_at": "2026-09-22T08:05:20+08:00"
+  },
+  {
+    "kind": "chip",
+    "runner_ref": "RUN-WANGWU-2026-G001",
+    "guardian_ref": "RUN-WANGWU-2026-G001",
+    "group_code": "A-001",
+    "checkpoint_ref": "CP-5K-F",
+    "device_id": "MAT-02",
+    "device_sequence": 9,
+    "source": "retransmitted",
+    "occurred_at": "2026-09-22T08:21:40+08:00"
+  },
+  {
+    "kind": "medical",
+    "runner_ref": "RUN-WANGWU-2026-I102",
+    "checkpoint_ref": "CP-10K-A",
+    "medical_action": "evacuation",
+    "operator_ref": "MED-07",
+    "reason": "踝部扭伤",
+    "detail_digest": "示例：真实系统中此处为 detail_text 的 sha256，原文不落库",
+    "occurred_at": "2026-09-22T08:31:20+08:00"
+  }
+]
